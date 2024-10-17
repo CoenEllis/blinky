@@ -63,12 +63,11 @@ public class Robot extends LoggedRobot {
                 break;
         }
 
-
-
         if (isReal()) {
             Logger.addDataReceiver(new WPILOGWriter("/media/sda1")); // Log to a USB stick
             Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-            // new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
+            // new PowerDistribution(1, ModuleType.kRev); // Enables power distribution
+            // logging
             setUseTiming(true);
             robotRunType = RobotRunType.kReal;
         } else {
@@ -88,13 +87,14 @@ public class Robot extends LoggedRobot {
 
             }
         }
-        // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the
+        // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in
+        // the
         // "Understanding Data Flow" page
         Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values
 
         // Instantiate our RobotContainer. This will perform all our button bindings,
         // and put our autonomous chooser on the dashboard.
-        robotContainer = new RobotContainer(robotRunType);
+        robotContainer = new RobotContainer();
     }
 
     /**
@@ -105,14 +105,16 @@ public class Robot extends LoggedRobot {
      * This runs after the mode specific periodic functions, but before LiveWindow and
      * SmartDashboard integrated updating.
      */
-
     @Override
     public void robotPeriodic() {
-        // Runs the Scheduler. This is responsible for polling buttons, adding newly-scheduled
+        // Runs the Scheduler. This is responsible for polling buttons, adding
+        // newly-scheduled
         // commands,
-        // running already-scheduled commands, removing finished or interrupted commands, and
+        // running already-scheduled commands, removing finished or interrupted
+        // commands, and
         // running
-        // subsystem periodic() methods. This must be called from the robot's periodic block in
+        // subsystem periodic() methods. This must be called from the robot's periodic
+        // block in
         // order for
         // anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
@@ -164,7 +166,6 @@ public class Robot extends LoggedRobot {
     /** This function is called periodically during test mode. */
     @Override
     public void testPeriodic() {}
-
 
     private static final String environmentVariable = "AKIT_LOG_PATH";
     private static final String advantageScopeFileName = "akit-log-path.txt";

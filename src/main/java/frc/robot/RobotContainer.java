@@ -8,16 +8,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Robot.RobotRunType;
-import frc.robot.subsystems.drive.Drivetrain;
-import frc.robot.subsystems.drive.DrivetrainIO;
-import frc.robot.subsystems.drive.DrivetrainVictorSP;
+import frc.robot.commands.OuttakeCommand;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LEDS;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
  * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and button mappings) should be declared here.
+ * subsystems, commands, and button mappings) should be here.
  */
 public class RobotContainer {
     /* Controllers */
@@ -27,25 +26,19 @@ public class RobotContainer {
     // Initialize AutoChooser Sendable
     private final SendableChooser<String> autoChooser = new SendableChooser<>();
 
-    /* Subsystems */
-    private Drivetrain drivetrain;
+    /* Subsytems */
+    Intake intake = new Intake();
+    LEDS leds = new LEDS(9, 60);
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
-    public RobotContainer(RobotRunType runtimeType) {
+    public RobotContainer() {
         SmartDashboard.putData("Choose Auto: ", autoChooser);
         autoChooser.setDefaultOption("Wait 1 Second", "wait");
-        switch (runtimeType) {
-            case kReal:
-                drivetrain = new Drivetrain(new DrivetrainVictorSP());
-                break;
-            case kSimulation:
-                // drivetrain = new Drivetrain(new DrivetrainSim() {});
-                break;
-            default:
-                drivetrain = new Drivetrain(new DrivetrainIO() {});
-        }
+
+        leds.setDefaultCommand(leds.setAllianceColor());
+
         // Configure the button bindings
         configureButtonBindings();
     }
@@ -56,7 +49,12 @@ public class RobotContainer {
      * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
      * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
      */
-    private void configureButtonBindings() {}
+    private void configureButtonBindings() {
+        driver.a().whileTrue(intake.intakeCommand());
+        // driver.b().whileTrue(outtake.outtakeCommand());
+        driver.b().whileTrue(new OuttakeCommand(intake));
+        // .alongWith(Commands.run(() -> leds.setcolor(Color.kGreen), leds)));
+    }
 
     /**
      * Gets the user's selected autonomous command.
